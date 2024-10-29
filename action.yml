@@ -1,0 +1,35 @@
+name: "Git2HFR action"
+description: "Edit un post sur HFR à partir du contenu d'un fichier"
+author: "Niks4925"
+inputs:
+  file:
+    description: "Fichier à utiliser comme source"
+    required: true
+  cat:
+    description: "Numéro de la cat"
+    required: true
+  post:
+    description: "Numéro du post à editer"
+    required: true
+  response:
+    description: "Numéro de réponse"
+    required: true
+
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.11
+
+    - name: Install dependencies
+      run: |
+        python3 -m pip install requests
+        python3 -m pip install BeautifulSoup4
+
+    - name: Run Python script
+      id: run_script
+      run: |
+        python git2hfr/git2hfr.py --login ${{ vars.HFR_LOGIN }} ${{ secrets.HFR_PASSWD }} --edit-post ${{ inputs.cat }} ${{ inputs.post }} ${{ inputs.response }} --content-file ${{ inputs.file }}
